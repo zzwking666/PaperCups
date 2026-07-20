@@ -1,0 +1,11 @@
+#include <string>
+
+namespace cdm {
+	class SetConfig
+	{
+	public:
+		zengyi : int : default = 0;
+		baoguang : int : default = 0;
+		xiangsudangliang : double : default = 0;
+	};
+}

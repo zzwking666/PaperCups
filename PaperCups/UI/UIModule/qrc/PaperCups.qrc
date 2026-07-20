@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/PaperCups">
+        <file>icons/close.png</file>
+    </qresource>
+</RCC>

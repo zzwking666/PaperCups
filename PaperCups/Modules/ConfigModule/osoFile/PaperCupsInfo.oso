@@ -1,0 +1,10 @@
+#include <string>
+
+namespace cdm {
+	class PaperCupsInfo
+	{
+	public:
+		shengchanzongliang : int : default = 0;
+		feipinzongliang : int : default = 0;
+	};
+}

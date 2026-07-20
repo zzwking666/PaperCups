@@ -1,0 +1,9 @@
+/build
+/out
+/.vs
+/output
+/vcpkg_installed
+
+/CMakeUserPresets.json
+
+!.claude/

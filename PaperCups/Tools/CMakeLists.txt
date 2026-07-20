@@ -1,0 +1,3 @@
+add_subdirectory(RunEnvCheck)
+add_subdirectory(PanZoomLabel)
+add_subdirectory(LicenseIssuer)

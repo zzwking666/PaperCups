@@ -3,10 +3,26 @@
 
 #include <QDebug>
 
+#include <cmath>
 #include <cstdio>
+#include <map>
 
 #include "Modules.hpp"
 #include "utility.hpp"
+
+// 类别ID -> 显示文字 映射表,按实际模型类别自行补充/修改
+// 未在表中的 classId 将直接显示数字 ID
+static const std::map<int, std::string> classIdNameMap = {
+	{ 1, "身体" },
+	{ 2, "缺陷" },
+	// 在此继续添加,例如: { 3, "xxx" },
+};
+
+static std::string getClassName(int classId)
+{
+	const auto it = classIdNameMap.find(classId);
+	return it != classIdNameMap.end() ? it->second : std::to_string(classId);
+}
 
 
 ImageProcess::ImageProcess(QObject* parent)
@@ -155,7 +171,10 @@ void ImageProcess::drawDetResult(QImage& image, const rw::imev::DetResult& detRe
 		rw::ImagePainter::drawRectangle(image, rectCfg);
 
 		char text[64];
-		std::snprintf(text, sizeof(text), "%d %.2f", static_cast<int>(det.classId), det.conf);
+		// 置信度转为 [0,100] 整数分数显示
+		std::snprintf(text, sizeof(text), "%s %d",
+			getClassName(static_cast<int>(det.classId)).c_str(),
+			static_cast<int>(std::lround(det.conf * 100.0f)));
 
 		rw::ImagePainter::DrawTextConfig textCfg;
 		textCfg.text = text;

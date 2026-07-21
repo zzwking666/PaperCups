@@ -77,7 +77,7 @@ bool CameraModule::build_camera1()
 {
 #ifdef BUILD_WITHOUT_HARDWARE
 	noHardwareTimer1 = new QTimer(this);
-	noHardwareTimer1->setInterval(500);
+	noHardwareTimer1->setInterval(1000);
 	QObject::connect(noHardwareTimer1, &QTimer::timeout,
 		this, &CameraModule::onNoHardwareCapture1);
 	onCameraStateChanged(1, true);

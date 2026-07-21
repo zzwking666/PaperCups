@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+#include <cstdio>
+
 #include "Modules.hpp"
 #include "utility.hpp"
 
@@ -119,6 +121,8 @@ void ImageProcess::processFrame(FramePacket& packet)
 {
 	bool isDefective = false;
 
+	QImage qimg = rw::img::cvMatToQImage(packet.matInfo.mat);
+
 	// 引擎不可用时透传原始图像
 	if (detEngine_)
 	{
@@ -128,7 +132,7 @@ void ImageProcess::processFrame(FramePacket& packet)
 		result.isDefective = judgeDefective(result.detResult);
 		isDefective = result.isDefective;
 
-		drawDetResult(packet.matInfo.mat, result.detResult);
+		drawDetResult(qimg, result.detResult);
 
 		if (result.isDefective)
 		{
@@ -137,21 +141,33 @@ void ImageProcess::processFrame(FramePacket& packet)
 		}
 	}
 
-	QImage qimg = rw::img::cvMatToQImage(packet.matInfo.mat);
 	emit imageReady(packet.index, qimg, isDefective);
 }
 
-void ImageProcess::drawDetResult(cv::Mat& mat, const rw::imev::DetResult& detResult)
+void ImageProcess::drawDetResult(QImage& image, const rw::imev::DetResult& detResult)
 {
 	for (const auto& det : detResult)
 	{
-		const cv::Rect box(det.rect.leftTop.x, det.rect.leftTop.y,
-			det.rect.width(), det.rect.height());
+		rw::ImagePainter::DrawRectangleConfig rectCfg;
+		rectCfg.rect = det.rect;
+		rectCfg.borderColor = rw::Color::Red;
+		rectCfg.thickness = 5;
+		rw::ImagePainter::drawRectangle(image, rectCfg);
 
-		cv::rectangle(mat, box, cv::Scalar(0, 0, 255), 2);
-		cv::putText(mat, cv::format("%d %.2f", static_cast<int>(det.classId), det.conf),
-			cv::Point(box.x, box.y - 5),
-			cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0, 0, 255), 1);
+		char text[64];
+		std::snprintf(text, sizeof(text), "%d %.2f", static_cast<int>(det.classId), det.conf);
+
+		rw::ImagePainter::DrawTextConfig textCfg;
+		textCfg.text = text;
+		textCfg.color = rw::Color::Red;
+		textCfg.fontSize = 10;
+		// position 为文字左上角;框上方空间不足时改画到框内顶部,避免文字因整体在图外被跳过
+		constexpr int textOffsetY = 30;
+		const int textY = det.rect.leftTop.y >= textOffsetY
+			? det.rect.leftTop.y - textOffsetY
+			: det.rect.leftTop.y + 2;
+		textCfg.position = rw::PointPixel(det.rect.leftTop.x, textY);
+		rw::ImagePainter::drawText(image, textCfg);
 	}
 }
 

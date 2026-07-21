@@ -58,7 +58,7 @@ private:
 	void destroyDetEngine();
 
 	void processFrame(FramePacket& packet);
-	void drawDetResult(cv::Mat& mat, const rw::imev::DetResult& detResult);
+	void drawDetResult(QImage& image, const rw::imev::DetResult& detResult);
 
 	// 判废规则接口:当前默认"检出任意框即废品",后续按类别/面积/数量扩展
 	bool judgeDefective(const rw::imev::DetResult& detResult) const;

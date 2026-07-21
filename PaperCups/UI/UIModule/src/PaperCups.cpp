@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QPainter>
+#include <QPixmap>
 #include <rwul/hoepZMotion/hoepZMotion_ZMotionDevice.hpp>
 #include <rwul/rqwu/Keyboard/rqwu_NumberKeyboard.h>
 #include "rwul/rqwu/rqwu_MessageBox.h"
@@ -63,7 +64,6 @@ void PaperCups::build_connect()
 void PaperCups::build_PaperCupsData()
 {
 	auto& paperCupsConfig = _configModule.paperCupsInfo;
-	auto& setConfig = _configModule.setConfig;
 
 	// 更新UI
 	ui->lb_ProductCount->setText(QString::number(paperCupsConfig.shengchanzongliang));
@@ -107,9 +107,28 @@ void PaperCups::onUpdateStatisticalInfoUI()
 	ui->lb_WasteCount->setText(QString::number(_statisticalInfo.feipinzongliang));
 }
 
-void PaperCups::onCameraDisplay(size_t index, const QImage& image)
+void PaperCups::onCameraDisplay(size_t index, const QImage& image, bool isDefective)
 {
-	
+	if (image.isNull())
+	{
+		return;
+	}
+
+	if (index == 1)
+	{
+		// 实时画面:不论好坏每帧都刷新
+		ui->label_imgDisplay_1->setPixmap(QPixmap::fromImage(image).scaled(
+			ui->label_imgDisplay_1->size(),
+			Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+		// 废品画面:只在判废时刷新,保留最近一张废品图
+		if (isDefective)
+		{
+			ui->label_imgNgDisplay_1->setPixmap(QPixmap::fromImage(image).scaled(
+				ui->label_imgNgDisplay_1->size(),
+				Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		}
+	}
 }
 
 void PaperCups::setConfigWindowClosed()

@@ -40,7 +40,7 @@ public slots:
 	void onFrameCaptured(rw::rqwc::MatInfo matInfo, size_t index);
 
 signals:
-	void imageReady(size_t index, const QImage& image);
+	void imageReady(size_t index, const QImage& image, bool isDefective);
 	void defectDetected(const ProcessResult& result);
 
 protected:

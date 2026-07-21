@@ -35,7 +35,7 @@ public slots:
 
 	void onUpdateStatisticalInfoUI();
 
-    void onCameraDisplay(size_t index, const QImage& image);
+    void onCameraDisplay(size_t index, const QImage& image, bool isDefective);
 
 	void setConfigWindowClosed();
 

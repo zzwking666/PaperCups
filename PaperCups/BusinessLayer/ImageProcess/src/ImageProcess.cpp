@@ -117,6 +117,8 @@ void ImageProcess::destroyDetEngine()
 
 void ImageProcess::processFrame(FramePacket& packet)
 {
+	bool isDefective = false;
+
 	// 引擎不可用时透传原始图像
 	if (detEngine_)
 	{
@@ -124,6 +126,7 @@ void ImageProcess::processFrame(FramePacket& packet)
 		result.cameraIndex = packet.index;
 		result.detResult = detEngine_->processImg(packet.matInfo.mat);
 		result.isDefective = judgeDefective(result.detResult);
+		isDefective = result.isDefective;
 
 		drawDetResult(packet.matInfo.mat, result.detResult);
 
@@ -135,7 +138,7 @@ void ImageProcess::processFrame(FramePacket& packet)
 	}
 
 	QImage qimg = rw::img::cvMatToQImage(packet.matInfo.mat);
-	emit imageReady(packet.index, qimg);
+	emit imageReady(packet.index, qimg, isDefective);
 }
 
 void ImageProcess::drawDetResult(cv::Mat& mat, const rw::imev::DetResult& detResult)

@@ -7,7 +7,9 @@
 #include <QImage>
 
 #include <atomic>
+#include <chrono>
 #include <deque>
+#include <map>
 
 #include "rwul/rqwcd/rqwc_d.hpp"
 #include "rwul/imevt/detection/imevt_det_factory.hpp"
@@ -60,6 +62,13 @@ private:
 	void processFrame(FramePacket& packet);
 	void drawDetResult(QImage& image, const rw::imev::DetResult& detResult);
 
+	// 限位区域:由配置四个限位值构造有效矩形,未设成有效区域时返回 false
+	bool buildLimitRect(rw::RectanglePixel& rect) const;
+	// 限位过滤:剔除中心点落在限位区域外的检测框;限位未设成有效区域时不过滤
+	void filterByLimit(rw::imev::DetResult& detResult) const;
+	// 限位区域绘制:蓝色矩形,限位未设成有效区域时不画
+	void drawLimitRegion(QImage& image) const;
+
 	// 判废规则接口:当前默认"检出任意框即废品",后续按类别/面积/数量扩展
 	bool judgeDefective(const rw::imev::DetResult& detResult) const;
 
@@ -71,6 +80,9 @@ private:
 	QWaitCondition _queueNotEmpty;
 	std::deque<FramePacket> _frameQueue;
 	std::atomic_uint64_t _dropCount{ 0 };
+
+	// 每台相机最近一次有效出图时间,用于出图间隔去抖(在 _queueMutex 保护下访问)
+	std::map<size_t, std::chrono::steady_clock::time_point> _lastFrameTime;
 
 	std::unique_ptr<rw::imev::DetEngine> detEngine_ = nullptr;
 };

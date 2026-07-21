@@ -36,6 +36,15 @@ private slots:
 	void btn_zengyi_clicked();
 	void btn_baoguang_clicked();
 
+	void btn_shangxianwei_clicked();
+	void btn_xiaxianwei_clicked();
+	void btn_zuoxianwei_clicked();
+	void btn_youxianwei_clicked();
+
+	void btn_tifeiyanshi_clicked();
+	void btn_tifeishuchuchixushijian_clicked();
+	void btn_xiangjichutujiange_clicked();
+
 public:
 	Ui::DlgProductSetClass* ui;
 private:

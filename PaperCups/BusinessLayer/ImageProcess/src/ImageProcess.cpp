@@ -3,6 +3,7 @@
 
 #include <QDebug>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <map>
@@ -65,10 +66,25 @@ void ImageProcess::stopThread()
 
 void ImageProcess::onFrameCaptured(rw::rqwc::MatInfo matInfo, size_t index)
 {
-	// 产量按相机出帧数统计,与帧是否被丢弃/判废无关
-	++Modules::getInstance().asynchronousThreadModule.statisticalInfo.shengchanzongliang;
+	const auto& setConfig = Modules::getInstance().configModule.setConfig;
 
 	QMutexLocker locker(&_queueMutex);
+
+	// 出图间隔去抖:间隔内连续出图视为硬件误触,直接废弃(不计产量、不入队)
+	if (setConfig.xiangjichutujiange > 0)
+	{
+		const auto now = std::chrono::steady_clock::now();
+		const auto it = _lastFrameTime.find(index);
+		if (it != _lastFrameTime.end()
+			&& std::chrono::duration_cast<std::chrono::milliseconds>(now - it->second).count() < setConfig.xiangjichutujiange)
+		{
+			return;
+		}
+		_lastFrameTime[index] = now;
+	}
+
+	// 产量按相机出帧数统计,与帧是否被丢弃/判废无关
+	++Modules::getInstance().asynchronousThreadModule.statisticalInfo.shengchanzongliang;
 
 	// 队满丢最旧:实时场景下旧帧无意义,优先保证画面时效性
 	if (_frameQueue.size() >= maxQueueSize)
@@ -145,10 +161,12 @@ void ImageProcess::processFrame(FramePacket& packet)
 		ProcessResult result;
 		result.cameraIndex = packet.index;
 		result.detResult = detEngine_->processImg(packet.matInfo.mat);
+		filterByLimit(result.detResult);
 		result.isDefective = judgeDefective(result.detResult);
 		isDefective = result.isDefective;
 
 		drawDetResult(qimg, result.detResult);
+		drawLimitRegion(qimg);
 
 		if (result.isDefective)
 		{
@@ -188,6 +206,56 @@ void ImageProcess::drawDetResult(QImage& image, const rw::imev::DetResult& detRe
 		textCfg.position = rw::PointPixel(det.rect.leftTop.x, textY);
 		rw::ImagePainter::drawText(image, textCfg);
 	}
+}
+
+bool ImageProcess::buildLimitRect(rw::RectanglePixel& rect) const
+{
+	const auto& setConfig = Modules::getInstance().configModule.setConfig;
+
+	// 限位未设成有效区域(右<=左 或 下<=上,含全部默认0)时无效
+	if (setConfig.youxianwei <= setConfig.zuoxianwei || setConfig.xiaxianwei <= setConfig.shangxianwei)
+	{
+		return false;
+	}
+
+	rect = rw::RectanglePixel(
+		rw::PointPixel(setConfig.zuoxianwei, setConfig.shangxianwei),
+		rw::PointPixel(setConfig.youxianwei, setConfig.xiaxianwei));
+	return true;
+}
+
+void ImageProcess::filterByLimit(rw::imev::DetResult& detResult) const
+{
+	rw::RectanglePixel limitRect;
+	if (!buildLimitRect(limitRect))
+	{
+		return;
+	}
+
+	// 以检测框中心点是否落在限位区域内判定
+	detResult.erase(
+		std::remove_if(detResult.begin(), detResult.end(), [&](const auto& det)
+		{
+			const auto center = det.rect.centralPoint();
+			return center.x < limitRect.leftTop.x || center.x > limitRect.rightBottom.x
+				|| center.y < limitRect.leftTop.y || center.y > limitRect.rightBottom.y;
+		}),
+		detResult.end());
+}
+
+void ImageProcess::drawLimitRegion(QImage& image) const
+{
+	rw::RectanglePixel limitRect;
+	if (!buildLimitRect(limitRect))
+	{
+		return;
+	}
+
+	rw::ImagePainter::DrawRectangleConfig rectCfg;
+	rectCfg.rect = limitRect;
+	rectCfg.borderColor = rw::Color::Blue;
+	rectCfg.thickness = 2;
+	rw::ImagePainter::drawRectangle(image, rectCfg);
 }
 
 bool ImageProcess::judgeDefective(const rw::imev::DetResult& detResult) const

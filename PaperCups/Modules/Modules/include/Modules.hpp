@@ -6,7 +6,8 @@
 #include "CameraModule.hpp"
 #include "ZMotionModule.hpp"
 #include "ConfigModule.hpp"
-#include "ImageStitch.hpp"
+#include "ImageProcess.hpp"
+#include "RejectThread.hpp"
 #include "AsynchronousThreadModule.hpp"
 
 class Modules
@@ -45,7 +46,8 @@ public:
 	CameraModule cameraModule;
 	//ZMotionModule zMotionModule;
 	ConfigModule configModule;
-	ImageStitch imageStitchModule;
+	ImageProcess imageProcessModule;
+	RejectThread rejectThread;
 	AsynchronousThreadModule asynchronousThreadModule;
 };
 

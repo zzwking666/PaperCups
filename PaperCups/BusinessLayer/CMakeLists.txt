@@ -1,4 +1,5 @@
-add_subdirectory(ImageStitch)
+add_subdirectory(ImageProcess)
+add_subdirectory(RejectThread)
 add_subdirectory(AsynchronousThread)
 add_subdirectory(actCry)
 add_subdirectory(LicenseManager)

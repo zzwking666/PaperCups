@@ -67,7 +67,7 @@ void AppRuntime::shutdown()
 void AppRuntime::build_connect()
 {
 	// 连接相机模块的图像捕获信号到UI显示槽函数
-    QObject::connect(&_modules.imageStitchModule, &ImageStitch::imageReady,
+    QObject::connect(&_modules.imageProcessModule, &ImageProcess::imageReady,
         _paperCups.get(), &PaperCups::onCameraDisplay);
 
 	// 连接相机模块的状态变化信号到UI显示槽函数

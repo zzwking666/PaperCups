@@ -51,8 +51,8 @@ cmake --build --preset windows-ninja-release-build
   `qt_wrap_ui` 编译为 `ui_*.h`。
 - `Modules/` —— 硬件/配置模块：`CameraModule`、`ConfigModule`、单例聚合器 `Modules`，以及
   `IModule` 接口。
-- `BusinessLayer/` —— 处理逻辑：`ImageStitch`（一个 `QThread`）、`AsynchronousThread`
-  （UI 刷新线程 + 统计）。
+- `BusinessLayer/` —— 处理逻辑：`ImageProcess`（AI 推理线程，一个 `QThread`）、
+  `RejectThread`（剔废线程）、`AsynchronousThread`（UI 刷新线程 + 统计）。
 - `Global/Utility` —— 全局路径/配置单例。
 - `Tools/` —— 可复用控件/辅助类：`PanZoomLabel`、`RunEnvCheck`。
 
@@ -80,13 +80,19 @@ cmake --build --preset windows-ninja-release-build
 中建立：
 
 ```
-CameraModule::onCameraCapture ──► ImageStitch::onFrameCaptured   (Modules::connect)
-ImageStitch::imageReady       ──► PaperCups::onCameraDisplay
+CameraModule::onCameraCapture ──► ImageProcess::onFrameCaptured   (Modules::connect)
+ImageProcess::imageReady       ──► PaperCups::onCameraDisplay
+ImageProcess::defectDetected   ──► RejectThread::onDefectDetected
 CameraModule::onCameraStateChanged ──► updateCameraLabelState
 RefreshUIThread::emit_RefreshUI ──► onUpdateStatisticalInfoUI / DlgProductSet::onUpdateFrameLost
 ```
 
-`ImageStitch` 缓存 `MatInfo` 帧并每 N 张拼接一次；统计信息（计数、各相机丢帧数）保存在
+`ImageProcess` 是独立推理线程：`onFrameCaptured` 把帧放入有界队列（队满丢最旧），
+`run()` 循环取帧后用 RWUL `imevt` 检测引擎（TensorRT，模型路径见 `globalPath.modelPath`）
+推理、画框、判废，再发 `imageReady`。引擎必须在 `run()` 内创建/销毁（CUDA 上下文
+线程亲和）；创建失败时降级为透传显示。判废规则在 `judgeDefective()` 中（当前默认
+检出任意框即废品），废品结果发 `defectDetected` 给 `RejectThread`——剔废动作
+`executeReject()` 目前是占位 TODO。统计信息（计数、各相机丢帧数）保存在
 `AsynchronousThreadModule::StatisticalInfo` 中，类型为 `std::atomic`，由 `RefreshUIThread`
 轮询后刷新 UI。
 

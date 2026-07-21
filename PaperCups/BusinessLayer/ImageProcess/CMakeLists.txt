@@ -1,4 +1,4 @@
-set(DEMO_TARGET ImageStitch)
+set(DEMO_TARGET ImageProcess)
 
 # GLOB扫一层目录下的所有.cpp文件,GLOB_RECURSE扫多层目录下的所有.cpp文件
 file(GLOB SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")

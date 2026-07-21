@@ -58,6 +58,9 @@ void Modules::destroy()
 void Modules::start()
 {
 	configModule.start();
+	// 先启动图像处理/剔废线程,再启动相机出图
+	imageProcessModule.startThread();
+	rejectThread.startThread();
 	cameraModule.start();
 	//zMotionModule.start();
 	asynchronousThreadModule.start();
@@ -65,17 +68,24 @@ void Modules::start()
 
 void Modules::stop()
 {
-	asynchronousThreadModule.stop();
-	//zMotionModule.stop();
+	// 先停相机出图,再停图像处理/剔废线程
 	cameraModule.stop();
+	imageProcessModule.stopThread();
+	rejectThread.stopThread();
+	//zMotionModule.stop();
+	asynchronousThreadModule.stop();
 	configModule.stop();
 }
 
 void Modules::connect()
 {
-	// 相机出图信号连接到图像拼接模块
+	// 相机出图信号连接到图像处理模块
 	QObject::connect(&cameraModule, &CameraModule::onCameraCapture,
-		&imageStitchModule, &ImageStitch::onFrameCaptured);
+		&imageProcessModule, &ImageProcess::onFrameCaptured);
+
+	// 判废结果连接到剔废线程
+	QObject::connect(&imageProcessModule, &ImageProcess::defectDetected,
+		&rejectThread, &RejectThread::onDefectDetected);
 }
 
 bool Modules::check()

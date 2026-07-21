@@ -21,6 +21,7 @@ target_link_libraries(${DEMO_TARGET}
 	PUBLIC Qt6::Core
 	PUBLIC BusinessLayer::RefreshUIThread
 	PUBLIC BusinessLayer::ZMotionPollingThread
+	PUBLIC BusinessLayer::RejectThread
 	PUBLIC Modules::IModule
 )
 

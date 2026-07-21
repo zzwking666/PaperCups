@@ -23,7 +23,6 @@ target_link_libraries(${DEMO_TARGET}
 	PUBLIC Modules::ConfigModule
 	PUBLIC Tools::RunEnvCheck
 	PUBLIC BusinessLayer::ImageProcess
-	PUBLIC BusinessLayer::RejectThread
 	PUBLIC BusinessLayer::AsynchronousThreadModule
 )
 

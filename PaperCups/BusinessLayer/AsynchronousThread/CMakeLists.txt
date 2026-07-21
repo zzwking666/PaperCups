@@ -1,3 +1,4 @@
 add_subdirectory(RefreshUIThread)
 add_subdirectory(ZMotionPollingThread)
+add_subdirectory(RejectThread)
 add_subdirectory(AsynchronousThreadModule)

@@ -7,7 +7,6 @@
 #include "ZMotionModule.hpp"
 #include "ConfigModule.hpp"
 #include "ImageProcess.hpp"
-#include "RejectThread.hpp"
 #include "AsynchronousThreadModule.hpp"
 
 class Modules
@@ -47,7 +46,6 @@ public:
 	//ZMotionModule zMotionModule;
 	ConfigModule configModule;
 	ImageProcess imageProcessModule;
-	RejectThread rejectThread;
 	AsynchronousThreadModule asynchronousThreadModule;
 };
 

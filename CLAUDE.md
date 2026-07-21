@@ -52,7 +52,8 @@ cmake --build --preset windows-ninja-release-build
 - `Modules/` —— 硬件/配置模块：`CameraModule`、`ConfigModule`、单例聚合器 `Modules`，以及
   `IModule` 接口。
 - `BusinessLayer/` —— 处理逻辑：`ImageProcess`（AI 推理线程，一个 `QThread`）、
-  `RejectThread`（剔废线程）、`AsynchronousThread`（UI 刷新线程 + 统计）。
+  `AsynchronousThread`（异步线程聚合：`AsynchronousThreadModule` 统一管理
+  `RefreshUIThread`（UI 刷新 + 统计）、`RejectThread`（剔废线程）等后台线程）。
 - `Global/Utility` —— 全局路径/配置单例。
 - `Tools/` —— 可复用控件/辅助类：`PanZoomLabel`、`RunEnvCheck`。
 

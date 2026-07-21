@@ -4,6 +4,7 @@
 #include <QObject>
 #include "RefreshUIThread.hpp"
 #include "ZMotionPollingThread.hpp"
+#include "RejectThread.hpp"
 
 class AsynchronousThreadModule
 	: public QObject, public IModule<bool>
@@ -22,5 +23,6 @@ public:
 	} statisticalInfo;
 public:
 	std::unique_ptr<RefreshUIThread> refreshUIThread{ nullptr };
+	std::unique_ptr<RejectThread> rejectThread{ nullptr };
 	//std::unique_ptr<ZMotionPollingThread> zMotionPollingThread{ nullptr };
 };

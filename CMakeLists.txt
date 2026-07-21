@@ -24,7 +24,7 @@ set(PC_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/output/${CMAKE_BUILD_TYPE}")
 #查找第三方库
 find_package(OpenCV CONFIG REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets Gui Concurrent)
-find_package(RWUL CONFIG REQUIRED COMPONENTS core oso hoecd rqwu imgcore imgqt rqwcd hoepZMotion hoei)
+find_package(RWUL CONFIG REQUIRED COMPONENTS core oso hoecd rqwu imgcore imgqt rqwcd hoepZMotion hoei imevcore imevt)
 
 if(BUILD_WITHOUT_HARDWARE)
 	add_compile_definitions(BUILD_WITHOUT_HARDWARE)

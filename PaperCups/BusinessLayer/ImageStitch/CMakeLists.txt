@@ -22,6 +22,7 @@ target_link_libraries(${DEMO_TARGET}
 	PUBLIC RWUL::rqwcd
 	PUBLIC Modules::Modules
 	PUBLIC RWUL::imgqt
+	PUBLIC RWUL::imevt
 )
 
 add_library(BusinessLayer::${DEMO_TARGET} ALIAS ${DEMO_TARGET})

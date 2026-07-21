@@ -15,6 +15,7 @@ public:
 public:
 	QString configRootPath = projectHome + R"(config\)";
 	QString modelRootPath = projectHome + R"(model\)";
+	QString modelPath = modelRootPath + R"(PaperCups.engine)";
 	QString paperCupsConfigPath = configRootPath + R"(PaperCups.xml)";
 	QString setConfigPath = configRootPath + R"(setConfig.xml)";
 public:

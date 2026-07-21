@@ -20,5 +20,5 @@ public:
 public:
 	QString companyRootPath = projectHome + R"(txt\)";
 	QString companyTxtPath = companyRootPath + R"(company.txt)";
-	QString testImgRootPath = projectHome + R"(testImg\)";
+	QString testImgRootPath = R"(D:\ImgStorage\PaperCups\)";
 }globalPath;

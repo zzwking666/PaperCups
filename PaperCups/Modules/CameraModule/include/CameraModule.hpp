@@ -7,6 +7,7 @@
 
 #ifdef BUILD_WITHOUT_HARDWARE
 #include <QTimer>
+#include <QStringList>
 #endif
 
 class CameraModule
@@ -58,6 +59,8 @@ private:
 #ifdef BUILD_WITHOUT_HARDWARE
 	QTimer* noHardwareTimer1{ nullptr };
 	int noHardwareFrameNum1{ 0 };
+	QStringList noHardwareImages1;
+	int noHardwareImageIndex1{ 0 };
 #endif
 public:
 	std::atomic<bool> isCamera1SoftTrigger{ false };

@@ -36,6 +36,11 @@ void PaperCups::initializeComponents()
 
 void PaperCups::build_ui()
 {
+	// 标题栏可点击区域（连续点击后最小化窗口），放在退出按钮左侧占满剩余空间
+	clickableTitle = new rw::rqw::ClickableLabel(this);
+	clickableTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	ui->hLayout_title->insertWidget(0, clickableTitle, 1);
+
 	build_PaperCupsData();
 	build_DlgCloseForm();
 	build_DlgProductSet();

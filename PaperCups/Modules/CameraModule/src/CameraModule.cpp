@@ -2,6 +2,10 @@
 #include"Utility.hpp"
 #include <QRegularExpression>
 
+#ifdef BUILD_WITHOUT_HARDWARE
+#include <QDir>
+#endif
+
 #include "Modules.hpp"
 
 CameraModule::CameraModule()
@@ -253,7 +257,24 @@ void CameraModule::onCamera1Capture(const rw::hoec::MatInfo& matInfo)
 #ifdef BUILD_WITHOUT_HARDWARE
 void CameraModule::onNoHardwareCapture1()
 {
-	const QString imagePath = globalPath.testImgRootPath + "OK20251225160441565_heat.jpg";
+	// 首次触发时枚举目录下的图片
+	if (noHardwareImages1.isEmpty())
+	{
+		const QDir dir(globalPath.testImgRootPath);
+		noHardwareImages1 = dir.entryList(
+			{ "*.jpg", "*.jpeg", "*.png", "*.bmp" }, QDir::Files, QDir::Name);
+		noHardwareImageIndex1 = 0;
+		if (noHardwareImages1.isEmpty())
+		{
+			qWarning("NoHardware: no image found in %s", qPrintable(globalPath.testImgRootPath));
+			return;
+		}
+	}
+
+	const QString imagePath = globalPath.testImgRootPath + noHardwareImages1.at(noHardwareImageIndex1);
+	// 循环播放目录中的图片
+	noHardwareImageIndex1 = (noHardwareImageIndex1 + 1) % noHardwareImages1.size();
+
 	cv::Mat img = cv::imread(imagePath.toStdString());
 	if (img.empty())
 	{

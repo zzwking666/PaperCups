@@ -83,6 +83,5 @@ void RejectThread::run()
 void RejectThread::executeReject(const ProcessResult& result)
 {
 	// TODO: 接入剔废硬件动作(气阀/运动控制),需考虑废品到达剔废工位的延时
-	qDebug() << "检测到废品,相机:" << result.cameraIndex
-		<< "缺陷框数量:" << result.detResult.size();
+	
 }

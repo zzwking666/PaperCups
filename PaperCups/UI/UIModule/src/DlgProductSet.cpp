@@ -64,6 +64,15 @@ void DlgProductSet::read_config()
 	ui->btn_zuoxianwei->setText(QString::number(setConfig.zuoxianwei));
 	ui->btn_youxianwei->setText(QString::number(setConfig.youxianwei));
 
+	ui->btn_zengyi_2->setText(QString::number(setConfig.zengyi2));
+	ui->btn_baoguang_2->setText(QString::number(setConfig.baoguang2));
+	ui->btn_xiangsudangliang_2->setText(QString::number(setConfig.xiangsudangliang2));
+
+	ui->btn_shangxianwei_2->setText(QString::number(setConfig.shangxianwei2));
+	ui->btn_xiaxianwei_2->setText(QString::number(setConfig.xiaxianwei2));
+	ui->btn_zuoxianwei_2->setText(QString::number(setConfig.zuoxianwei2));
+	ui->btn_youxianwei_2->setText(QString::number(setConfig.youxianwei2));
+
 	ui->btn_tifeiyanshi->setText(QString::number(setConfig.tifeiyanshi));
 	ui->btn_tifeishuchuchixushijian->setText(QString::number(setConfig.tifeishuchuchixushijian));
 	ui->btn_xiangjichutujiange->setText(QString::number(setConfig.xiangjichutujiange));
@@ -89,6 +98,22 @@ void DlgProductSet::build_connect()
 		this, &DlgProductSet::btn_zuoxianwei_clicked);
 	QObject::connect(ui->btn_youxianwei, &QPushButton::clicked,
 		this, &DlgProductSet::btn_youxianwei_clicked);
+
+	QObject::connect(ui->btn_zengyi_2, &QPushButton::clicked,
+		this, &DlgProductSet::btn_zengyi_2_clicked);
+	QObject::connect(ui->btn_baoguang_2, &QPushButton::clicked,
+		this, &DlgProductSet::btn_baoguang_2_clicked);
+	QObject::connect(ui->btn_xiangsudangliang_2, &QPushButton::clicked,
+		this, &DlgProductSet::btn_xiangsudangliang_2_clicked);
+
+	QObject::connect(ui->btn_shangxianwei_2, &QPushButton::clicked,
+		this, &DlgProductSet::btn_shangxianwei_2_clicked);
+	QObject::connect(ui->btn_xiaxianwei_2, &QPushButton::clicked,
+		this, &DlgProductSet::btn_xiaxianwei_2_clicked);
+	QObject::connect(ui->btn_zuoxianwei_2, &QPushButton::clicked,
+		this, &DlgProductSet::btn_zuoxianwei_2_clicked);
+	QObject::connect(ui->btn_youxianwei_2, &QPushButton::clicked,
+		this, &DlgProductSet::btn_youxianwei_2_clicked);
 
 	QObject::connect(ui->btn_tifeiyanshi, &QPushButton::clicked,
 		this, &DlgProductSet::btn_tifeiyanshi_clicked);
@@ -163,6 +188,65 @@ void DlgProductSet::btn_baoguang_clicked()
 	}
 }
 
+void DlgProductSet::btn_xiangsudangliang_2_clicked()
+{
+	rw::rqwu::NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
+			return;
+		}
+		auto& setConfig = _configModule.setConfig;
+		ui->btn_xiangsudangliang_2->setText(value);
+		setConfig.xiangsudangliang2 = value.toDouble();
+	}
+}
+
+void DlgProductSet::btn_zengyi_2_clicked()
+{
+	rw::rqwu::NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
+			return;
+		}
+		auto& setConfig = _configModule.setConfig;
+		ui->btn_zengyi_2->setText(value);
+		setConfig.zengyi2 = value.toDouble();
+		_cameraModule.setCamera2Gain(setConfig.zengyi2);
+	}
+}
+
+void DlgProductSet::btn_baoguang_2_clicked()
+{
+	rw::rqwu::NumberKeyboard numKeyBord;
+	numKeyBord.setWindowFlags(Qt::Window | Qt::CustomizeWindowHint);
+	auto isAccept = numKeyBord.exec();
+	if (isAccept == QDialog::Accepted)
+	{
+		auto value = numKeyBord.getValue();
+		if (value.toDouble() < 0)
+		{
+			QMessageBox::warning(this, "提示", "请输入大于等于0的数值");
+			return;
+		}
+		auto& setConfig = _configModule.setConfig;
+		ui->btn_baoguang_2->setText(value);
+		setConfig.baoguang2 = value.toDouble();
+		_cameraModule.setCamera2ExposureTime(setConfig.baoguang2);
+	}
+}
+
 void DlgProductSet::btn_shangxianwei_clicked()
 {
 	editIntParam(this, ui->btn_shangxianwei, _configModule.setConfig.shangxianwei);
@@ -181,6 +265,26 @@ void DlgProductSet::btn_zuoxianwei_clicked()
 void DlgProductSet::btn_youxianwei_clicked()
 {
 	editIntParam(this, ui->btn_youxianwei, _configModule.setConfig.youxianwei);
+}
+
+void DlgProductSet::btn_shangxianwei_2_clicked()
+{
+	editIntParam(this, ui->btn_shangxianwei_2, _configModule.setConfig.shangxianwei2);
+}
+
+void DlgProductSet::btn_xiaxianwei_2_clicked()
+{
+	editIntParam(this, ui->btn_xiaxianwei_2, _configModule.setConfig.xiaxianwei2);
+}
+
+void DlgProductSet::btn_zuoxianwei_2_clicked()
+{
+	editIntParam(this, ui->btn_zuoxianwei_2, _configModule.setConfig.zuoxianwei2);
+}
+
+void DlgProductSet::btn_youxianwei_2_clicked()
+{
+	editIntParam(this, ui->btn_youxianwei_2, _configModule.setConfig.youxianwei2);
 }
 
 void DlgProductSet::btn_tifeiyanshi_clicked()

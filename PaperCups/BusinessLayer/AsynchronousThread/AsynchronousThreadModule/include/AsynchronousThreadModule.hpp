@@ -20,6 +20,8 @@ public:
 	{
 		std::atomic_uint64_t shengchanzongliang{ 0 };
 		std::atomic_uint64_t feipinzongliang{ 0 };
+		std::atomic_uint64_t shengchanzongliang2{ 0 };
+		std::atomic_uint64_t feipinzongliang2{ 0 };
 	} statisticalInfo;
 public:
 	std::unique_ptr<RefreshUIThread> refreshUIThread{ nullptr };

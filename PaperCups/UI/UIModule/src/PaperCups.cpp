@@ -68,6 +68,8 @@ void PaperCups::build_PaperCupsData()
 	// 更新UI
 	ui->lb_ProductCount->setText(QString::number(paperCupsConfig.shengchanzongliang));
 	ui->lb_WasteCount->setText(QString::number(paperCupsConfig.feipinzongliang));
+	ui->lb_ProductCount_2->setText(QString::number(paperCupsConfig.shengchanzongliang2));
+	ui->lb_WasteCount_2->setText(QString::number(paperCupsConfig.feipinzongliang2));
 }
 
 void PaperCups::build_DlgCloseForm()
@@ -94,6 +96,16 @@ void PaperCups::updateCameraLabelState(int cameraIndex, bool state)
 			ui->label_camera1State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
 		}
 		break;
+	case 2:
+		if (state) {
+			ui->label_camera2State->setText("连接成功");
+			ui->label_camera2State->setStyleSheet(QString("QLabel{color:rgb(0, 230, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
+		}
+		else {
+			ui->label_camera2State->setText("连接失败");
+			ui->label_camera2State->setStyleSheet(QString("QLabel{color:rgb(230, 0, 0);font-size: 18px;font - weight: bold;padding: 5px 5px;} "));
+		}
+		break;
 	default:
 		break;
 	}
@@ -105,6 +117,8 @@ void PaperCups::onUpdateStatisticalInfoUI()
 
 	ui->lb_ProductCount->setText(QString::number(_statisticalInfo.shengchanzongliang));
 	ui->lb_WasteCount->setText(QString::number(_statisticalInfo.feipinzongliang));
+	ui->lb_ProductCount_2->setText(QString::number(_statisticalInfo.shengchanzongliang2));
+	ui->lb_WasteCount_2->setText(QString::number(_statisticalInfo.feipinzongliang2));
 }
 
 void PaperCups::onCameraDisplay(size_t index, const QImage& image, bool isDefective)
@@ -126,6 +140,21 @@ void PaperCups::onCameraDisplay(size_t index, const QImage& image, bool isDefect
 		{
 			ui->label_imgNgDisplay_1->setPixmap(QPixmap::fromImage(image).scaled(
 				ui->label_imgNgDisplay_1->size(),
+				Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		}
+	}
+	else if (index == 2)
+	{
+		// 实时画面:不论好坏每帧都刷新
+		ui->label_imgDisplay_2->setPixmap(QPixmap::fromImage(image).scaled(
+			ui->label_imgDisplay_2->size(),
+			Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+		// 废品画面:只在判废时刷新,保留最近一张废品图
+		if (isDefective)
+		{
+			ui->label_imgNgDisplay_2->setPixmap(QPixmap::fromImage(image).scaled(
+				ui->label_imgNgDisplay_2->size(),
 				Qt::KeepAspectRatio, Qt::SmoothTransformation));
 		}
 	}
@@ -175,4 +204,6 @@ void PaperCups::pbtn_resetProduct_clicked()
 
 	_statisticalInfo.shengchanzongliang = 0;
 	_statisticalInfo.feipinzongliang = 0;
+	_statisticalInfo.shengchanzongliang2 = 0;
+	_statisticalInfo.feipinzongliang2 = 0;
 }

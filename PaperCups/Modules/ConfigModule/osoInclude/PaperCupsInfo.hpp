@@ -21,6 +21,8 @@ namespace cdm {
     public:
         int shengchanzongliang{ 0 };
         int feipinzongliang{ 0 };
+        int shengchanzongliang2{ 0 };
+        int feipinzongliang2{ 0 };
     };
 
     inline PaperCupsInfo::PaperCupsInfo(const rw::oso::ObjectStoreAssembly& assembly)
@@ -40,12 +42,24 @@ namespace cdm {
             throw std::runtime_error("$variable$feipinzongliang is not found");
         }
         feipinzongliang = feipinzongliangItem->getValueAsInt();
+        auto shengchanzongliang2Item = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$shengchanzongliang2$"));
+        if (!shengchanzongliang2Item) {
+            throw std::runtime_error("$variable$shengchanzongliang2 is not found");
+        }
+        shengchanzongliang2 = shengchanzongliang2Item->getValueAsInt();
+        auto feipinzongliang2Item = rw::oso::ObjectStoreCoreToItem(assembly.getItem("$variable$feipinzongliang2$"));
+        if (!feipinzongliang2Item) {
+            throw std::runtime_error("$variable$feipinzongliang2 is not found");
+        }
+        feipinzongliang2 = feipinzongliang2Item->getValueAsInt();
     }
 
     inline PaperCupsInfo::PaperCupsInfo(const PaperCupsInfo& obj)
     {
         shengchanzongliang = obj.shengchanzongliang;
         feipinzongliang = obj.feipinzongliang;
+        shengchanzongliang2 = obj.shengchanzongliang2;
+        feipinzongliang2 = obj.feipinzongliang2;
     }
 
     inline PaperCupsInfo& PaperCupsInfo::operator=(const PaperCupsInfo& obj)
@@ -53,6 +67,8 @@ namespace cdm {
         if (this != &obj) {
             shengchanzongliang = obj.shengchanzongliang;
             feipinzongliang = obj.feipinzongliang;
+            shengchanzongliang2 = obj.shengchanzongliang2;
+            feipinzongliang2 = obj.feipinzongliang2;
         }
         return *this;
     }
@@ -69,12 +85,20 @@ namespace cdm {
         feipinzongliangItem->setName("$variable$feipinzongliang$");
         feipinzongliangItem->setValueFromInt(feipinzongliang);
         assembly.addItem(feipinzongliangItem);
+        auto shengchanzongliang2Item = std::make_shared<rw::oso::ObjectStoreItem>();
+        shengchanzongliang2Item->setName("$variable$shengchanzongliang2$");
+        shengchanzongliang2Item->setValueFromInt(shengchanzongliang2);
+        assembly.addItem(shengchanzongliang2Item);
+        auto feipinzongliang2Item = std::make_shared<rw::oso::ObjectStoreItem>();
+        feipinzongliang2Item->setName("$variable$feipinzongliang2$");
+        feipinzongliang2Item->setValueFromInt(feipinzongliang2);
+        assembly.addItem(feipinzongliang2Item);
         return assembly;
     }
 
     inline bool PaperCupsInfo::operator==(const PaperCupsInfo& obj) const
     {
-        return shengchanzongliang == obj.shengchanzongliang && feipinzongliang == obj.feipinzongliang;
+        return shengchanzongliang == obj.shengchanzongliang && feipinzongliang == obj.feipinzongliang && shengchanzongliang2 == obj.shengchanzongliang2 && feipinzongliang2 == obj.feipinzongliang2;
     }
 
     inline bool PaperCupsInfo::operator!=(const PaperCupsInfo& obj) const

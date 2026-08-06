@@ -84,7 +84,15 @@ void ImageProcess::onFrameCaptured(rw::rqwc::MatInfo matInfo, size_t index)
 	}
 
 	// 产量按相机出帧数统计,与帧是否被丢弃/判废无关
-	++Modules::getInstance().asynchronousThreadModule.statisticalInfo.shengchanzongliang;
+	auto& statisticalInfo = Modules::getInstance().asynchronousThreadModule.statisticalInfo;
+	if (index == 2)
+	{
+		++statisticalInfo.shengchanzongliang2;
+	}
+	else
+	{
+		++statisticalInfo.shengchanzongliang;
+	}
 
 	// 队满丢最旧:实时场景下旧帧无意义,优先保证画面时效性
 	if (_frameQueue.size() >= maxQueueSize)
@@ -161,16 +169,24 @@ void ImageProcess::processFrame(FramePacket& packet)
 		ProcessResult result;
 		result.cameraIndex = packet.index;
 		result.detResult = detEngine_->processImg(packet.matInfo.mat);
-		filterByLimit(result.detResult);
+		filterByLimit(packet.index, result.detResult);
 		result.isDefective = judgeDefective(result.detResult);
 		isDefective = result.isDefective;
 
 		drawDetResult(qimg, result.detResult);
-		drawLimitRegion(qimg);
+		drawLimitRegion(qimg, packet.index);
 
 		if (result.isDefective)
 		{
-			++Modules::getInstance().asynchronousThreadModule.statisticalInfo.feipinzongliang;
+			auto& statisticalInfo = Modules::getInstance().asynchronousThreadModule.statisticalInfo;
+			if (packet.index == 2)
+			{
+				++statisticalInfo.feipinzongliang2;
+			}
+			else
+			{
+				++statisticalInfo.feipinzongliang;
+			}
 			emit defectDetected(result);
 		}
 	}
@@ -208,26 +224,32 @@ void ImageProcess::drawDetResult(QImage& image, const rw::imev::DetResult& detRe
 	}
 }
 
-bool ImageProcess::buildLimitRect(rw::RectanglePixel& rect) const
+bool ImageProcess::buildLimitRect(size_t index, rw::RectanglePixel& rect) const
 {
 	const auto& setConfig = Modules::getInstance().configModule.setConfig;
 
+	// 通道2使用第二组限位参数
+	const int shangxianwei = index == 2 ? setConfig.shangxianwei2 : setConfig.shangxianwei;
+	const int xiaxianwei = index == 2 ? setConfig.xiaxianwei2 : setConfig.xiaxianwei;
+	const int zuoxianwei = index == 2 ? setConfig.zuoxianwei2 : setConfig.zuoxianwei;
+	const int youxianwei = index == 2 ? setConfig.youxianwei2 : setConfig.youxianwei;
+
 	// 限位未设成有效区域(右<=左 或 下<=上,含全部默认0)时无效
-	if (setConfig.youxianwei <= setConfig.zuoxianwei || setConfig.xiaxianwei <= setConfig.shangxianwei)
+	if (youxianwei <= zuoxianwei || xiaxianwei <= shangxianwei)
 	{
 		return false;
 	}
 
 	rect = rw::RectanglePixel(
-		rw::PointPixel(setConfig.zuoxianwei, setConfig.shangxianwei),
-		rw::PointPixel(setConfig.youxianwei, setConfig.xiaxianwei));
+		rw::PointPixel(zuoxianwei, shangxianwei),
+		rw::PointPixel(youxianwei, xiaxianwei));
 	return true;
 }
 
-void ImageProcess::filterByLimit(rw::imev::DetResult& detResult) const
+void ImageProcess::filterByLimit(size_t index, rw::imev::DetResult& detResult) const
 {
 	rw::RectanglePixel limitRect;
-	if (!buildLimitRect(limitRect))
+	if (!buildLimitRect(index, limitRect))
 	{
 		return;
 	}
@@ -243,10 +265,10 @@ void ImageProcess::filterByLimit(rw::imev::DetResult& detResult) const
 		detResult.end());
 }
 
-void ImageProcess::drawLimitRegion(QImage& image) const
+void ImageProcess::drawLimitRegion(QImage& image, size_t index) const
 {
 	rw::RectanglePixel limitRect;
-	if (!buildLimitRect(limitRect))
+	if (!buildLimitRect(index, limitRect))
 	{
 		return;
 	}

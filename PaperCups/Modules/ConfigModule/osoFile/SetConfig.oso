@@ -11,6 +11,13 @@ namespace cdm {
 		xiaxianwei : int : default = 0;
 		zuoxianwei : int : default = 0;
 		youxianwei : int : default = 0;
+		zengyi2 : int : default = 0;
+		baoguang2 : int : default = 0;
+		xiangsudangliang2 : double : default = 0;
+		shangxianwei2 : int : default = 0;
+		xiaxianwei2 : int : default = 0;
+		zuoxianwei2 : int : default = 0;
+		youxianwei2 : int : default = 0;
 		tifeiyanshi : int : default = 0;
 		tifeishuchuchixushijian : int : default = 0;
 		xiangjichutujiange : int : default = 0;

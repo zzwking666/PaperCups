@@ -62,12 +62,12 @@ private:
 	void processFrame(FramePacket& packet);
 	void drawDetResult(QImage& image, const rw::imev::DetResult& detResult);
 
-	// 限位区域:由配置四个限位值构造有效矩形,未设成有效区域时返回 false
-	bool buildLimitRect(rw::RectanglePixel& rect) const;
+	// 限位区域:由配置四个限位值构造有效矩形(按相机通道取对应限位参数),未设成有效区域时返回 false
+	bool buildLimitRect(size_t index, rw::RectanglePixel& rect) const;
 	// 限位过滤:剔除中心点落在限位区域外的检测框;限位未设成有效区域时不过滤
-	void filterByLimit(rw::imev::DetResult& detResult) const;
+	void filterByLimit(size_t index, rw::imev::DetResult& detResult) const;
 	// 限位区域绘制:蓝色矩形,限位未设成有效区域时不画
-	void drawLimitRegion(QImage& image) const;
+	void drawLimitRegion(QImage& image, size_t index) const;
 
 	// 判废规则接口:当前默认"检出任意框即废品",后续按类别/面积/数量扩展
 	bool judgeDefective(const rw::imev::DetResult& detResult) const;

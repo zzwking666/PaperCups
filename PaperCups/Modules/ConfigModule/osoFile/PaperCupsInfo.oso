@@ -6,5 +6,7 @@ namespace cdm {
 	public:
 		shengchanzongliang : int : default = 0;
 		feipinzongliang : int : default = 0;
+		shengchanzongliang2 : int : default = 0;
+		feipinzongliang2 : int : default = 0;
 	};
 }

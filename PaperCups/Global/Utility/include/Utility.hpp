@@ -4,6 +4,7 @@
 inline struct
 {
 	QString cameraIp1 = "1";
+	QString cameraIp2 = "2";
 	QString zMotionIp = "192.168.0.11";
 }utility;
 
